@@ -235,6 +235,7 @@ class Board:
             return None
         return mouse_pos[0] // self.cell_size, mouse_pos[1] // self.cell_size
 
+    # счетчик
     def scoring(self, pos):
         global score
         if self.board[pos[1] // self.cell_size][pos[0] // self.cell_size] == 2:
@@ -244,7 +245,7 @@ class Board:
             self.board[pos[1] // self.cell_size][pos[0] // self.cell_size] = 3
             score += 10
 
-
+# класс призрака
 class Blinky(AnimatedSprite):
     def __init__(self, sheet, columns, rows, x, y):
         self.frame = 0
