@@ -131,45 +131,77 @@ class AnimatedSprite(pygame.sprite.Sprite):
 class Board:
 
     # конструктор класса
-    def __init__(self, width, height):
+    def __init__(self, width1, height1):
         # ширина поля
-        self.width = width
+        self.width = width1
 
         # высота поля
-        self.height = height
+        self.height = height1
 
         # само игровое поле
-        self.board = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                      [1, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 2, 1],
-                      [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-                      [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-                      [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-                      [1, 4, 2, 2, 2, 2, 4, 2, 2, 4, 2, 2, 4, 2, 2, 4, 2, 2, 4, 2, 2, 4, 2, 2, 2, 2, 4, 1],
-                      [1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-                      [1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-                      [1, 2, 2, 2, 2, 2, 4, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 1, 4, 2, 2, 2, 2, 2, 1],
-                      [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1],
-                      [0, 0, 0, 0, 0, 1, 2, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 2, 1, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 0, 0, 0, 0, 0],
-                      [1, 1, 1, 1, 1, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 1, 1, 1, 1, 1],
-                      [0, 0, 0, 0, 0, 0, 4, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 4, 0, 0, 0, 0, 0, 0],
-                      [1, 1, 1, 1, 1, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 1, 1, 1, 1, 1],
-                      [0, 0, 0, 0, 0, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 1, 2, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 1, 2, 1, 0, 0, 0, 0, 0],
-                      [0, 0, 0, 0, 0, 1, 2, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 2, 1, 0, 0, 0, 0, 0],
-                      [1, 1, 1, 1, 1, 1, 2, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 2, 1, 1, 1, 1, 1, 1],
-                      [1, 2, 2, 2, 2, 2, 4, 2, 2, 4, 2, 2, 2, 1, 1, 2, 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-                      [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-                      [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-                      [1, 2, 2, 2, 1, 1, 4, 2, 2, 4, 2, 2, 2, 0, 0, 0, 0, 0, 4, 0, 0, 4, 1, 1, 2, 2, 2, 1],
-                      [1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1],
-                      [1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1],
-                      [1, 2, 2, 4, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 4, 2, 2, 1],
-                      [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
-                      [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
-                      [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-                      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+        self.board = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+             1, 1, 1, 1, 1, 1],
+            [1, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 4,
+             2, 2, 2, 2, 2, 1],
+            [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2,
+             1, 1, 1, 1, 2, 1],
+            [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2,
+             1, 1, 1, 1, 2, 1],
+            [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2,
+             1, 1, 1, 1, 2, 1],
+            [1, 4, 2, 2, 2, 2, 4, 2, 2, 4, 2, 2, 4, 2, 2, 4, 2, 2, 4, 2, 2, 4,
+             2, 2, 2, 2, 4, 1],
+            [1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2,
+             1, 1, 1, 1, 2, 1],
+            [1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2,
+             1, 1, 1, 1, 2, 1],
+            [1, 2, 2, 2, 2, 2, 4, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 1, 4,
+             2, 2, 2, 2, 2, 1],
+            [1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 2,
+             1, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 1, 2, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 2,
+             1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2,
+             1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2,
+             1, 0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2,
+             1, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 0, 4, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 4,
+             0, 0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2,
+             1, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2,
+             1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 2, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 1, 2,
+             1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 2, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 2,
+             1, 0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1, 1, 2, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 2,
+             1, 1, 1, 1, 1, 1],
+            [1, 2, 2, 2, 2, 2, 4, 2, 2, 4, 2, 2, 2, 1, 1, 2, 2, 2, 4, 2, 2, 2,
+             2, 2, 2, 2, 2, 1],
+            [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2,
+             1, 1, 1, 1, 2, 1],
+            [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2,
+             1, 1, 1, 1, 2, 1],
+            [1, 2, 2, 2, 1, 1, 4, 2, 2, 4, 2, 2, 2, 0, 0, 0, 0, 0, 4, 0, 0, 4,
+             1, 1, 2, 2, 2, 1],
+            [1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2,
+             1, 1, 2, 1, 1, 1],
+            [1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2,
+             1, 1, 2, 1, 1, 1],
+            [1, 2, 2, 4, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 1, 2,
+             2, 2, 4, 2, 2, 1],
+            [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1,
+             1, 1, 1, 1, 2, 1],
+            [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1,
+             1, 1, 1, 1, 2, 1],
+            [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 2, 2, 4, 2, 2, 2, 2, 2, 2,
+             2, 2, 2, 2, 2, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+             1, 1, 1, 1, 1, 1]]
 
         # прочие характеристики (размер клетки, координаты)
         self.start = False
@@ -184,16 +216,18 @@ class Board:
         self.cell_size = cell_size
 
     # функция рендера
-    def render(self, screen):
+    def render(self, screen1):
         for y in range(self.height):
             for x in range(self.width):
                 if self.board[y][x] == 2 or self.board[y][x] == 4:
-                    pygame.draw.rect(screen, pygame.Color(253, 189, 150),
-                                     (x * self.cell_size + \
-                                      self.cell_size // 2 - 3,
-                                      y * self.cell_size + \
-                                      self.cell_size // 2 - 3, 6,
-                                      6), 0)
+                    pygame.draw.rect(screen1, pygame.Color(253, 189, 150),
+                                     (
+                                         x * self.cell_size +
+                                         self.cell_size // 2 - 3,
+                                         y * self.cell_size +
+                                         self.cell_size // 2 - 3,
+                                         6,
+                                         6), 0)
 
     def get_cell(self, mouse_pos):
         if mouse_pos[0] // self.cell_size > self.width - 1 or \
@@ -201,24 +235,20 @@ class Board:
             return None
         return mouse_pos[0] // self.cell_size, mouse_pos[1] // self.cell_size
 
-    def om_nom_nom(self, pos):
+    def scoring(self, pos):
         global score
-        if self.board[pos[1] // self.cell_size] \
-                [pos[0] // self.cell_size] == 2:
-            self.board[pos[1] // self.cell_size] \
-                [pos[0] // self.cell_size] = 0
+        if self.board[pos[1] // self.cell_size][pos[0] // self.cell_size] == 2:
+            self.board[pos[1] // self.cell_size][pos[0] // self.cell_size] = 0
             score += 10
-        if self.board[pos[1] // self.cell_size] \
-                [pos[0] // self.cell_size] == 4:
-            self.board[pos[1] // self.cell_size] \
-                [pos[0] // self.cell_size] = 3
+        if self.board[pos[1] // self.cell_size][pos[0] // self.cell_size] == 4:
+            self.board[pos[1] // self.cell_size][pos[0] // self.cell_size] = 3
             score += 10
 
 
 class Blinky(AnimatedSprite):
     def __init__(self, sheet, columns, rows, x, y):
         self.frame = 0
-        self.dest = 'up'
+        self.destination = 'up'
         super().__init__(sheet, columns, rows, x, y)
 
     def update(self):
@@ -241,6 +271,7 @@ class Pacman(AnimatedSprite):
 
     # функция движения Пакмана
     def move(self):
+
         # функция поворота
         if self.next_ang != self.angle:
             if self.next_ang == 90:
@@ -255,24 +286,28 @@ class Pacman(AnimatedSprite):
             elif self.next_ang == 180:
                 if not pygame.sprite.collide_mask(self, right_collider):
                     self.angle = self.next_ang
+
         if self.angle == 0:
             if not pygame.sprite.collide_mask(self, left_collider):
                 self.rect = self.rect.move(1, 0)
             else:
                 self.image = self.frames[1]
                 self.image = pygame.transform.rotate(self.image, self.angle)
+
         elif self.angle == 180:
             if not pygame.sprite.collide_mask(self, right_collider):
                 self.rect = self.rect.move(-1, 0)
             else:
                 self.image = self.frames[1]
                 self.image = pygame.transform.rotate(self.image, self.angle)
+
         elif self.angle == 90:
             if not pygame.sprite.collide_mask(self, down_collider):
                 self.rect = self.rect.move(0, -1)
             else:
                 self.image = self.frames[1]
                 self.image = pygame.transform.rotate(self.image, self.angle)
+
         elif self.angle == -90:
             if not pygame.sprite.collide_mask(self, up_collider):
                 self.rect = self.rect.move(0, 1)
@@ -285,12 +320,15 @@ class Pacman(AnimatedSprite):
         elif self.rect.x > 560:
             self.rect.x = -34
 
+    # здесь реализуется возможность будущего поворота
     def rot(self, angle):
         self.next_ang = angle
 
+    # местоположение Пакмана
     def where(self):
         return self.rect.x + 17, self.rect.y + 17
 
+    # обновление
     def update(self):
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame]
@@ -298,26 +336,48 @@ class Pacman(AnimatedSprite):
         self.mask = pygame.mask.from_surface(self.image)
 
 
+# загрузка картинок приведения
 blinky = Blinky(load_image("blinky.png"), 4, 2, 264, 453.5)
 pacman = Pacman(load_image("pacman2.png"), 4, 1, 264, 453.5)
 
+# настройка коллайдеров
 up_collider = Up_Collider()
 down_collider = Down_Collider()
 left_collider = Left_Collider()
 right_collider = Right_Collider()
+
+# вызов метода класса Lab
 Lab(all_sprites)
+
+# размеры доски
 board = Board(28, 31)
+
+# устанавливаем FPS
 fps = 140
+
+# исходный счетчик
 tick = 0
+
+# начало отсчета времени
 clock = pygame.time.Clock()
+
+# начало игрового цикла
 running = True
+
 while running:
+    # заливаем фон черным цветом
     screen.fill(pygame.Color("black"))
+
+    # вызываем метод спрайтов
     all_sprites.draw(screen)
 
+    # события игрового цикла
     for event in pygame.event.get():
+
         if event.type == pygame.QUIT:
             running = False
+
+        # управление клавишами
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 pacman.rot(180)
@@ -327,26 +387,54 @@ while running:
                 pacman.rot(90)
             if event.key == pygame.K_DOWN:
                 pacman.rot(-90)
+
+    # проверка счетчика
     if tick == 2:
         # blinky.update()
-        pacman.update()
-    pacman.move()
-    # blinky.move()
-    board.render(screen)
-    board.om_nom_nom(pacman.where())
 
+        # обновляем Пакмана
+        pacman.update()
+
+    # Пакман двигается
+    pacman.move()
+
+    # blinky.move()
+
+    # рендер игрового поля
+    board.render(screen)
+
+    # настройка счетчика
+    board.scoring(pacman.where())
+
+    # настройка шрифта
     font = pygame.font.Font(None, 30)
+
+    # сама надпись счета
     text = font.render(f"Score: {str(score)}", True, (0, 255, 0))
+
+    # координаты надписи
     text_x = 0
     text_y = 630
+
+    # высота и ширина подписи
     text_w = text.get_width()
     text_h = text.get_height()
 
+    # текст на экране
     screen.blit(text, (text_x + 50, text_y))
+
+    # увеличиваем переменную на 1
     tick += 1
+
+    # проверка на то, чтобы переменная была не больше 3
     if tick > 4:
         tick = 0
+
+    # стандартная функция времени игрового цикла
     clock.tick(fps)
+
+    # обновление экрана
     pygame.display.flip()
 
+# завершение игрового события
 pygame.quit()
