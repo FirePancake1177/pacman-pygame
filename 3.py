@@ -42,7 +42,6 @@ def load_image(name, color_key=None):
     return image
 
 
-# создание класса Lab
 class Lab(pygame.sprite.Sprite):
     image = load_image("lab.png")
 
