@@ -15,7 +15,6 @@ pygame.display.set_caption('Pacman')
 # создаем точку отсчета времени
 clock = pygame.time.Clock()
 
-# переменная, отвечающая за отображение очков
 score = 0
 
 all_sprites = pygame.sprite.Group()
