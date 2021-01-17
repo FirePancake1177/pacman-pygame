@@ -12,10 +12,6 @@ screen = pygame.display.set_mode(size)
 # установка названия окна
 pygame.display.set_caption('Pacman')
 
-# создаем точку отсчета времени
-clock = pygame.time.Clock()
-
-
 # переменная, отвечающая за отображение очков
 score = 0
 
@@ -43,6 +39,7 @@ def load_image(name, color_key=None):
     return image
 
 
+# создание класса Lab
 class Lab(pygame.sprite.Sprite):
     image = load_image("lab.png")
 
@@ -130,10 +127,18 @@ class AnimatedSprite(pygame.sprite.Sprite):
                     frame_location, self.rect.size)))
 
 
+# создаем класс Board
 class Board:
+
+    # конструктор класса
     def __init__(self, width, height):
+        # ширина поля
         self.width = width
+
+        # высота поля
         self.height = height
+
+        # само игровое поле
         self.board = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                       [1, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 2, 1],
                       [1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
@@ -166,16 +171,19 @@ class Board:
                       [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
                       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
+        # прочие характеристики (размер клетки, координаты)
         self.start = False
         self.left = 10
         self.top = 10
         self.cell_size = 20
 
+    # стандартная функция отображения
     def set_view(self, left, top, cell_size):
         self.left = left
         self.top = top
         self.cell_size = cell_size
 
+    # функция рендера
     def render(self, screen):
         for y in range(self.height):
             for x in range(self.width):
@@ -187,31 +195,24 @@ class Board:
                                       self.cell_size // 2 - 3, 6,
                                       6), 0)
 
-    def get_click(self, mouse_pos):
-        cell = self.get_cell(mouse_pos)
-        self.on_click(cell)
-
     def get_cell(self, mouse_pos):
         if mouse_pos[0] // self.cell_size > self.width - 1 or \
                 mouse_pos[1] // self.cell_size > self.height - 1:
             return None
-        return (mouse_pos[0] // self.cell_size, mouse_pos[1] // self.cell_size)
+        return mouse_pos[0] // self.cell_size, mouse_pos[1] // self.cell_size
 
     def om_nom_nom(self, pos):
-        try:
-            global score
-            if self.board[pos[1] // self.cell_size] \
-                    [pos[0] // self.cell_size] == 2:
-                self.board[pos[1] // self.cell_size] \
-                    [pos[0] // self.cell_size] = 0
-                score += 10
-            if self.board[pos[1] // self.cell_size] \
-                    [pos[0] // self.cell_size] == 4:
-                self.board[pos[1] // self.cell_size] \
-                    [pos[0] // self.cell_size] = 3
-                score += 10
-        except:
-            pass
+        global score
+        if self.board[pos[1] // self.cell_size] \
+                [pos[0] // self.cell_size] == 2:
+            self.board[pos[1] // self.cell_size] \
+                [pos[0] // self.cell_size] = 0
+            score += 10
+        if self.board[pos[1] // self.cell_size] \
+                [pos[0] // self.cell_size] == 4:
+            self.board[pos[1] // self.cell_size] \
+                [pos[0] // self.cell_size] = 3
+            score += 10
 
 
 class Blinky(AnimatedSprite):
@@ -229,13 +230,18 @@ class Blinky(AnimatedSprite):
         self.mask = pygame.mask.from_surface(self.image)
 
 
+# создание класса Пакмана
 class Pacman(AnimatedSprite):
+
+    # инициализация класса
     def __init__(self, sheet, columns, rows, x, y):
         self.angle = 0
         self.next_ang = 0
         super().__init__(sheet, columns, rows, x, y)
 
+    # функция движения Пакмана
     def move(self):
+        # функция поворота
         if self.next_ang != self.angle:
             if self.next_ang == 90:
                 if not pygame.sprite.collide_mask(self, down_collider):
@@ -283,7 +289,7 @@ class Pacman(AnimatedSprite):
         self.next_ang = angle
 
     def where(self):
-        return (self.rect.x + 17, self.rect.y + 17)
+        return self.rect.x + 17, self.rect.y + 17
 
     def update(self):
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
@@ -306,7 +312,7 @@ tick = 0
 clock = pygame.time.Clock()
 running = True
 while running:
-    screen.fill(pygame.Color("white"))
+    screen.fill(pygame.Color("black"))
     all_sprites.draw(screen)
 
     for event in pygame.event.get():
