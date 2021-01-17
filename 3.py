@@ -18,7 +18,6 @@ clock = pygame.time.Clock()
 # переменная, отвечающая за отображение очков
 score = 0
 
-# группа спрайтов
 all_sprites = pygame.sprite.Group()
 
 
