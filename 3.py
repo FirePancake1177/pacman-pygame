@@ -495,7 +495,7 @@ up_collider = Up_Collider()
 down_collider = Down_Collider()
 left_collider = Left_Collider()
 right_collider = Right_Collider()
-pacman = Pacman(load_image("pacman.png"), 4, 1, 294, 453.5)
+pacman = Pacman(load_image("pacman2.png"), 4, 1, 294, 453.5)
 blinky = Blinky(load_image("blinky.png"), 4, 2, 264, 455)
 end_game_ = End_Game(load_image("end_game.png"), 9, 1, 264, 453.5)
 
