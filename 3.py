@@ -17,7 +17,14 @@ score = 0
 
 # группа спрайтов
 all_sprites = pygame.sprite.Group()
+all_sprites2 = pygame.sprite.Group()
+end_game_ = pygame.sprite.Group()
+life1 = pygame.sprite.Group()
+life2 = pygame.sprite.Group()
+life3 = pygame.sprite.Group()
+lives = 3
 pause = False
+gameover = False
 
 
 # функция для загрузки изображения из локального хранилища
@@ -50,6 +57,39 @@ class Lab(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = 0
         self.rect.y = 0
+
+
+class Life1(pygame.sprite.Sprite):
+    image = load_image("life.png")
+
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = Life1.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 390
+        self.rect.y = 625
+
+
+class Life2(pygame.sprite.Sprite):
+    image = load_image("life.png")
+
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = Life2.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 420
+        self.rect.y = 625
+
+
+class Life3(pygame.sprite.Sprite):
+    image = load_image("life.png")
+
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = Life3.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 450
+        self.rect.y = 625
 
 
 # создание верхнего коллайдера
@@ -111,7 +151,7 @@ class Right_Collider(pygame.sprite.Sprite):
 
 class AnimatedSprite(pygame.sprite.Sprite):
     def __init__(self, sheet, columns, rows, x, y):
-        super().__init__(all_sprites)
+        super().__init__(all_sprites2)
         self.frames = []
         self.cut_sheet(sheet, columns, rows)
         self.cur_frame = 0
@@ -298,7 +338,14 @@ class Blinky(AnimatedSprite):
             self.next_dest = 'up'
 
     def where(self):
-        return self.rect.x + 20, self.rect.y + 17
+        return self.rect.x + 17, self.rect.y + 17
+
+    def restart(self):
+        self.rect.x = 264
+        self.rect.y = 453.5
+        self.frame = 0
+        self.destination = 'right'
+        self.next_dest = 'right'
 
     def move(self):
         global cell
@@ -412,6 +459,12 @@ class Pacman(AnimatedSprite):
     def where(self):
         return self.rect.x + 17, self.rect.y + 17
 
+    def restart(self):
+        self.rect.x = 294
+        self.rect.y = 453.5
+        self.angle = 0
+        self.next_ang = 0
+
     # обновление
     def update(self):
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
@@ -420,9 +473,28 @@ class Pacman(AnimatedSprite):
         self.mask = pygame.mask.from_surface(self.image)
 
 
-class End_Game(AnimatedSprite):
+class End_Game(pygame.sprite.Sprite):
     def __init__(self, sheet, columns, rows, x, y):
-        super().__init__(sheet, columns, rows, x, y)
+        super().__init__(end_game_)
+        self.frames = []
+        self.cut_sheet(sheet, columns, rows)
+        self.cur_frame = 0
+        self.image = self.frames[self.cur_frame]
+        self.rect = self.rect.move(x, y)
+
+    def cut_sheet(self, sheet, columns, rows):
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
+                                sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (self.rect.w * i, self.rect.h * j)
+                self.frames.append(sheet.subsurface(pygame.Rect(
+                    frame_location, self.rect.size)))
+
+    # перемещение анимации смерти на последнюю позицию игрока
+    def move(self, pos):
+        self.rect.x = pos[0] - 17
+        self.rect.y = pos[1] - 17
 
     def update(self):
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
@@ -433,7 +505,10 @@ class End_Game(AnimatedSprite):
 # загрузка картинок
 pacman = Pacman(load_image("pacman2.png"), 4, 1, 294, 453.5)
 blinky = Blinky(load_image("blinky2.png"), 4, 2, 264, 453.5)
-# end_game = End_Game(load_image("end_game.png"), 9, 1, 264, 453.5)
+end_game = End_Game(load_image("end_game.png"), 9, 1, 264, 453.5)
+
+# размеры доски
+board = Board(28, 31)
 
 # настройка коллайдеров
 up_collider = Up_Collider()
@@ -443,15 +518,17 @@ right_collider = Right_Collider()
 
 # вызов метода класса Lab
 Lab(all_sprites)
-
-# размеры доски
-board = Board(28, 31)
+Life1(life1)
+Life2(life2)
+Life3(life3)
 
 # устанавливаем FPS
 fps = 140
 
-# исходный счетчик
+# исходные счетчики
 tick = 0
+tick2 = 0
+tick3 = 0
 
 # начало отсчета времени
 clock = pygame.time.Clock()
@@ -486,12 +563,33 @@ while running:
     # проверка счетчика
     if tick == 2:
         blinky.update()
-        # end_game.update()
         pacman.update()
 
+    if abs(pacman.where()[0] - blinky.where()[0]) < 2 and abs(pacman.where()[1] - blinky.where()[1]) < 2:
+        lives -= 1
+        pause = True
+        fps = 15
+        end_game.move(pacman.where())
+        pacman.restart()
+        blinky.restart()
+
     # Пакман двигается
-    pacman.move()
-    blinky.move()
+    if not pause and not gameover:
+        pacman.move()
+        if tick3 == 0:
+            blinky.move()
+        all_sprites2.draw(screen)
+    elif pause and not gameover:
+        end_game_.draw(screen)
+        end_game.update()
+        tick2 += 1
+        if tick2 == 9:
+            pause = False
+            tick2 = 0
+            fps = 140
+            if lives == -1:
+                gameover = True
+
     board.render(screen)
     board.scoring(pacman.where())
 
@@ -515,12 +613,36 @@ while running:
     # текст на экране
     screen.blit(text, (text_x + 50, text_y))
 
+    if lives == 3:
+        life1.draw(screen)
+        life2.draw(screen)
+        life3.draw(screen)
+    elif lives == 2:
+        life1.draw(screen)
+        life2.draw(screen)
+    elif lives == 1:
+        life1.draw(screen)
+    elif lives == -1 and gameover:
+        pause = False
+        pygame.draw.rect(screen, pygame.Color(0, 0, 0),
+                         (220, 459, 135, 25), 0)
+        font = pygame.font.Font(None, 35)
+        text = font.render(f"Game Over", True, (255, 0, 0))
+        text_x = 170
+        text_y = 459
+        text_w = text.get_width()
+        text_h = text.get_height()
+        screen.blit(text, (text_x + 50, text_y))
+
     # увеличиваем переменную на 1
     tick += 1
+    tick3 += 1
 
     # проверка на то, чтобы переменная была не больше 3
     if tick > 4:
         tick = 0
+    if tick3 > 1:
+        tick3 = 0
 
     # стандартная функция времени игрового цикла
     clock.tick(fps)
