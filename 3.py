@@ -14,6 +14,7 @@ pygame.display.set_caption('Pacman')
 
 # переменная, отвечающая за отображение очков
 score = 0
+dots_left = 243
 
 # группа спрайтов
 all_sprites = pygame.sprite.Group()
@@ -25,6 +26,7 @@ life3 = pygame.sprite.Group()
 lives = 3
 pause = False
 gameover = False
+game_win = False
 
 
 # функция для загрузки изображения из локального хранилища
@@ -50,13 +52,23 @@ def load_image(name, color_key=None):
 # создание класса Lab
 class Lab(pygame.sprite.Sprite):
     image = load_image("lab.png")
+    image2 = load_image("lab2.png")
 
     def __init__(self, *group):
         super().__init__(*group)
         self.image = Lab.image
+        self.frame = 0
         self.rect = self.image.get_rect()
         self.rect.x = 0
         self.rect.y = 0
+
+    def update(self):
+        if self.frame == 0:
+            self.image = Lab.image
+            self.frame = 1
+        elif self.frame == 1:
+            self.image = Lab.image2
+            self.frame = 0
 
 
 class Life1(pygame.sprite.Sprite):
@@ -221,11 +233,6 @@ class Board:
                       [1, 6, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 2, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 6, 1],
                       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
 
-    # def check(self):
-    #     if Board.matrix == self.board:
-    #         return True
-    #     return False
-
     def set_view(self, left, top, cell_size):
         self.left = left
         self.top = top
@@ -256,21 +263,25 @@ class Board:
     def scoring(self, pos):
         try:
             global score
+            global dots_left
             if self.board[pos[1] //
                           self.cell_size][pos[0] // self.cell_size] == 2:
                 self.board[pos[1]
                            // self.cell_size][pos[0] // self.cell_size] = 0
                 score += 10
+                dots_left -= 1
             if self.board[pos[1]
                           // self.cell_size][pos[0] // self.cell_size] == 4:
                 self.board[pos[1]
                            // self.cell_size][pos[0] // self.cell_size] = 3
                 score += 10
+                dots_left -= 1
             if self.board[pos[1]
                           // self.cell_size][pos[0] // self.cell_size] == 6:
                 self.board[pos[1]
                            // self.cell_size][pos[0] // self.cell_size] = 5
                 score += 10
+                dots_left -= 1
         except:
             pass
 
@@ -524,7 +535,7 @@ left_collider = Left_Collider()
 right_collider = Right_Collider()
 
 # вызов метода класса Lab
-Lab(all_sprites)
+lab = Lab(all_sprites)
 Life1(life1)
 Life2(life2)
 Life3(life3)
@@ -581,12 +592,12 @@ while running:
         blinky.restart()
 
     # Пакман двигается
-    if not pause and not gameover:
+    if not pause and not gameover and not game_win:
         pacman.move()
         if tick3 == 0:
             blinky.move()
         all_sprites2.draw(screen)
-    elif pause and not gameover:
+    elif pause and not gameover and not game_win:
         end_game_.draw(screen)
         end_game.update()
         tick2 += 1
@@ -596,6 +607,18 @@ while running:
             fps = 140
             if lives == -1:
                 gameover = True
+    elif pause and game_win and not gameover:
+        lab.update()
+        tick2 += 1
+        if tick2 == 11:
+            pause = False
+            tick2 = 0
+            fps = 140
+            game_win = False
+            pacman.restart()
+            blinky.restart()
+            board.reload()
+
 
     board.render(screen)
     board.scoring(pacman.where())
@@ -641,11 +664,12 @@ while running:
         text_h = text.get_height()
         screen.blit(text, (text_x + 50, text_y))
 
-    print(board.check())
-    if score % 2370 == 0 and score != 0 and not board.check():
-        pacman.restart()
-        blinky.restart()
-        board.reload()
+    if dots_left == 0:
+        fps = 5
+        pause = True
+        game_win = True
+        dots_left = 271
+
 
     # увеличиваем переменную на 1
     tick += 1
