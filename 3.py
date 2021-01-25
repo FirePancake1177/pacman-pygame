@@ -16,14 +16,17 @@ pygame.display.set_caption('Pacman')
 score = 0
 dots_left = 243
 
-# группа спрайтов
+# группы спрайтов
 all_sprites = pygame.sprite.Group()
 all_sprites2 = pygame.sprite.Group()
 end_game_ = pygame.sprite.Group()
+
+# три жизни Пакмана
 life1 = pygame.sprite.Group()
 life2 = pygame.sprite.Group()
 life3 = pygame.sprite.Group()
 lives = 3
+
 pause = False
 gameover = False
 game_win = False
@@ -71,6 +74,7 @@ class Lab(pygame.sprite.Sprite):
             self.frame = 0
 
 
+# первая жизнь
 class Life1(pygame.sprite.Sprite):
     image = load_image("life.png")
 
@@ -82,6 +86,7 @@ class Life1(pygame.sprite.Sprite):
         self.rect.y = 625
 
 
+# вторая жизнь
 class Life2(pygame.sprite.Sprite):
     image = load_image("life.png")
 
@@ -93,6 +98,7 @@ class Life2(pygame.sprite.Sprite):
         self.rect.y = 625
 
 
+# третья жизнь
 class Life3(pygame.sprite.Sprite):
     image = load_image("life.png")
 
@@ -583,6 +589,7 @@ fps = 140
 tick = 0
 tick2 = 0
 tick3 = 0
+min_score = 0
 
 # начало отсчета времени
 clock = pygame.time.Clock()
@@ -613,7 +620,8 @@ while running:
                 pacman.rot(90)
             if event.key == pygame.K_DOWN:
                 pacman.rot(-90)
-
+    if score > min_score:
+        min_score = score - min_score + min_score
     # проверка счетчика
     if tick == 2:
         blinky.update()
@@ -623,9 +631,12 @@ while running:
             pacman.where()[1] - blinky.where()[1]) < 2:
         lives -= 1
         pause = True
-        fps = 15
+        fps = 7
         end_game.move(pacman.where())
         pacman.restart()
+        pygame.mixer.music.load(r'data\pacman_death.wav')
+        pygame.mixer.music.set_volume(0.2)
+        pygame.mixer.music.play(0)
         blinky.restart()
 
     # Пакман двигается
