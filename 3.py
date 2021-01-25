@@ -21,7 +21,7 @@ all_sprites = pygame.sprite.Group()
 all_sprites2 = pygame.sprite.Group()
 end_game_ = pygame.sprite.Group()
 
-# три жизни Пакмана
+# переменные спрайтов и количества жизней игрока
 life1 = pygame.sprite.Group()
 life2 = pygame.sprite.Group()
 life3 = pygame.sprite.Group()
@@ -32,7 +32,7 @@ gameover = False
 game_win = False
 
 
-# функция для загрузки изображения из локального хранилища
+# функция загрузки изображения из локального хранилища
 def load_image(name, color_key=None):
     fullname = os.path.join('data', name)
     try:
@@ -52,7 +52,7 @@ def load_image(name, color_key=None):
     return image
 
 
-# создание класса Lab
+# отображение спрайта лабиринта и его анимации при победе
 class Lab(pygame.sprite.Sprite):
     image = load_image("lab.png")
     image2 = load_image("lab2.png")
@@ -65,6 +65,7 @@ class Lab(pygame.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 0
 
+    # анимация лабиринта при победе и переходе на след. уровень
     def update(self):
         if self.frame == 0:
             self.image = Lab.image
@@ -74,7 +75,8 @@ class Lab(pygame.sprite.Sprite):
             self.frame = 0
 
 
-# первая жизнь
+# следующие 3 класса - инициализация классов 3х спрайтов жизней для возможности
+# скрывать их по очереди
 class Life1(pygame.sprite.Sprite):
     image = load_image("life.png")
 
@@ -86,7 +88,6 @@ class Life1(pygame.sprite.Sprite):
         self.rect.y = 625
 
 
-# вторая жизнь
 class Life2(pygame.sprite.Sprite):
     image = load_image("life.png")
 
@@ -98,7 +99,6 @@ class Life2(pygame.sprite.Sprite):
         self.rect.y = 625
 
 
-# третья жизнь
 class Life3(pygame.sprite.Sprite):
     image = load_image("life.png")
 
@@ -110,7 +110,9 @@ class Life3(pygame.sprite.Sprite):
         self.rect.y = 625
 
 
-# создание верхнего коллайдера
+# следующие 4 класса снизу - инициализация коллайдеров стен всех 4х направлений
+# которые при слиянии помогают определять не только столкновение, но и 
+# направление стены, с которой произошло соприкосновение
 class Up_Collider(pygame.sprite.Sprite):
     image = load_image("up_collider.png")
 
@@ -122,8 +124,6 @@ class Up_Collider(pygame.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 0
 
-
-# создание нижнего коллайдера
 
 class Down_Collider(pygame.sprite.Sprite):
     image = load_image("down_collider.png")
@@ -137,8 +137,6 @@ class Down_Collider(pygame.sprite.Sprite):
         self.rect.y = 0
 
 
-# создание левого коллайдера
-
 class Left_Collider(pygame.sprite.Sprite):
     image = load_image("left_collider.png")
 
@@ -150,8 +148,6 @@ class Left_Collider(pygame.sprite.Sprite):
         self.rect.x = 0
         self.rect.y = 0
 
-
-# создание правого коллайдера
 
 class Right_Collider(pygame.sprite.Sprite):
     image = load_image("right_collider.png")
@@ -165,8 +161,7 @@ class Right_Collider(pygame.sprite.Sprite):
         self.rect.y = 0
 
 
-# создание главного класса спрайтов
-
+# класс, отвечающий за все спрайтовые анимации в игре 
 class AnimatedSprite(pygame.sprite.Sprite):
     def __init__(self, sheet, columns, rows, x, y):
         super().__init__(all_sprites2)
@@ -206,6 +201,7 @@ class Board:
         self.top = 10
         self.cell_size = 20
 
+    # исходная матрица лабиринта
     def reload(self):
         self.board = [
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -276,6 +272,7 @@ class Board:
         self.top = top
         self.cell_size = cell_size
 
+    # отображение точек (еды) на поле    
     def render(self, screen1):
         for y in range(self.height):
             for x in range(self.width):
@@ -297,7 +294,7 @@ class Board:
             return None
         return pos[0] // self.cell_size, pos[1] // self.cell_size
 
-    # также известный как om_nom_nom
+    # функция начисления очков и съедания еды в лабиринте
     def scoring(self, pos):
         try:
             global score
@@ -331,14 +328,15 @@ class Blinky(AnimatedSprite):
         self.destination = 'right'
         self.next_dest = 'right'
         super().__init__(sheet, columns, rows, x, y)
-
-    # обновление маршрута призрака
+        
+    # обновление анимации призрака и зависимость её от направления его движения
     def update(self):
         if self.frame == 0:
             self.frame = 1
         else:
             self.frame = 0
-
+        
+        # проверка направления
         if self.destination == 'right':
             self.frame2 = self.frame
         elif self.destination == 'left':
@@ -351,10 +349,12 @@ class Blinky(AnimatedSprite):
         self.image = self.frames[self.frame2]
         self.mask = pygame.mask.from_surface(self.image)
 
-    # расчет пути к Пакману
+    # функция, вычисляющяя кратчайшее расстояние по прямой до игрока
     def check(self):
         cell = board.get_cell(self.where())
         pac = pacman.where()
+        # рассчитывание расстояния до игрока или запись большого числа в случае,
+        # если рассматриваемая точка принадлежит стене
         if board.get_cell_num((cell[1], cell[0] + 1)) != 1:
             dist1 = (((cell[0] + 1) * 20 - pac[0]) ** 2 + (
                     cell[1] * 20 + 17 - pac[1]) ** 2) ** 0.5
@@ -375,7 +375,9 @@ class Blinky(AnimatedSprite):
                     (cell[1] - 1) * 20 + 17 - pac[1]) ** 2) ** 0.5
         else:
             dist4 = 1000
-
+        
+        # запись последующего направления, для более гибкого движения, подобно
+        # игроку
         if dist1 == min(dist1, dist2, dist3, dist4):
             self.next_dest = 'right'
         elif dist2 == min(dist1, dist2, dist3, dist4):
@@ -386,6 +388,7 @@ class Blinky(AnimatedSprite):
             self.next_dest = 'up'
 
     def check2(self):
+        # нахождение пути и смена направления на поворотах
         cell = board.get_cell(self.where())
         if board.get_cell_num(
                 (cell[1], cell[0] + 1)) != 1 and self.destination != 'left':
@@ -399,23 +402,24 @@ class Blinky(AnimatedSprite):
         elif board.get_cell_num(
                 (cell[1] - 1, cell[0])) != 1 and self.destination != 'down':
             self.next_dest = 'up'
-
-    # функция, возвращающая координаты объекта
+    
+    # возврат положения призрака
     def where(self):
         return self.rect.x + 17, self.rect.y + 17
 
-    # рестарт поля
+    # обнуление позиции и направления призрака, т.е возвращение его на старт
     def restart(self):
         self.rect.x = 264
         self.rect.y = 453.5
         self.frame = 0
         self.destination = 'right'
         self.next_dest = 'right'
-
-    # само движение призрака
+        
+    # реализация движения врага
     def move(self):
         global cell
-
+        
+        # изменение направления при несовпадении следующего направления
         if self.next_dest == 'up':
             if not pygame.sprite.collide_mask(self, down_collider):
                 self.destination = self.next_dest
@@ -428,7 +432,8 @@ class Blinky(AnimatedSprite):
         elif self.next_dest == 'left':
             if not pygame.sprite.collide_mask(self, right_collider):
                 self.destination = self.next_dest
-
+        
+        # само движение противника
         if self.destination == 'right':
             cell = board.get_cell(self.where())
             if not pygame.sprite.collide_mask(self, left_collider):
@@ -445,7 +450,8 @@ class Blinky(AnimatedSprite):
             cell = board.get_cell(self.where())
             if not pygame.sprite.collide_mask(self, up_collider):
                 self.rect = self.rect.move(0, 1)
-
+        
+        # проверка и изменение направления на поворотах
         if board.get_cell_num(
                 (cell[1], cell[0])) == 4 or \
                 board.get_cell_num((cell[1], cell[0])) == 3:
@@ -456,7 +462,7 @@ class Blinky(AnimatedSprite):
             blinky.check2()
 
 
-# создание класса Пакмана
+# класса Игрока
 class Pacman(AnimatedSprite):
 
     # инициализация класса
@@ -465,10 +471,10 @@ class Pacman(AnimatedSprite):
         self.next_ang = 0
         super().__init__(sheet, columns, rows, x, y)
 
-    # функция движения Пакмана
+    # реализация движения Пакмана
     def move(self):
 
-        # функция поворота
+        # проверка на наличие нового направления, не совпадающего с нынешним
         if self.next_ang != self.angle:
             if self.next_ang == 90:
                 if not pygame.sprite.collide_mask(self, down_collider):
@@ -482,7 +488,9 @@ class Pacman(AnimatedSprite):
             elif self.next_ang == 180:
                 if not pygame.sprite.collide_mask(self, right_collider):
                     self.angle = self.next_ang
-
+        
+        # поворот игрока, изменение его направления и проверка 
+        # на сталкивание со стенами
         if self.angle == 0:
             if not pygame.sprite.collide_mask(self, left_collider):
                 self.rect = self.rect.move(1, 0)
@@ -510,27 +518,29 @@ class Pacman(AnimatedSprite):
             else:
                 self.image = self.frames[1]
                 self.image = pygame.transform.rotate(self.image, self.angle)
-
+        
+        # реализация "телепортации" игрока при движении в туннеле
         if self.rect.x < -34:
             self.rect.x = 561
         elif self.rect.x > 560:
             self.rect.x = -34
 
-    # здесь реализуется возможность будущего поворота
+    # реализация запоминания следующего поворота для удобства управления
     def rot(self, angle):
         self.next_ang = angle
 
     # местоположение Пакмана
     def where(self):
         return self.rect.x + 17, self.rect.y + 17
-
+    
+    # возвращение игрока в начало игры и обнуление его направления
     def restart(self):
         self.rect.x = 294
         self.rect.y = 453.5
         self.angle = 0
         self.next_ang = 0
 
-    # обновление
+    # обновление анимации игрока
     def update(self):
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame]
@@ -538,6 +548,7 @@ class Pacman(AnimatedSprite):
         self.mask = pygame.mask.from_surface(self.image)
 
 
+# класс, отвечающий за анимацию смерти игрока
 class End_Game(pygame.sprite.Sprite):
     def __init__(self, sheet, columns, rows, x, y):
         super().__init__(end_game_)
@@ -561,18 +572,19 @@ class End_Game(pygame.sprite.Sprite):
         self.rect.x = pos[0] - 17
         self.rect.y = pos[1] - 17
 
+    # обновление анимации и её воспроизведение
     def update(self):
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)
         self.image = self.frames[self.cur_frame]
         self.mask = pygame.mask.from_surface(self.image)
 
 
-# загрузка картинок
+# загрузка анимированных спрайтов
 pacman = Pacman(load_image("pacman2.png"), 4, 1, 294, 453.5)
 blinky = Blinky(load_image("blinky2.png"), 4, 2, 264, 453.5)
 end_game = End_Game(load_image("end_game.png"), 9, 1, 264, 453.5)
 
-# размеры доски
+# установка размеров доски
 board = Board(28, 31)
 
 # настройка коллайдеров
@@ -581,7 +593,7 @@ down_collider = Down_Collider()
 left_collider = Left_Collider()
 right_collider = Right_Collider()
 
-# вызов метода класса Lab
+# отображение статичных (в большинстве своём) спрайтов
 lab = Lab(all_sprites)
 Life1(life1)
 Life2(life2)
@@ -594,7 +606,6 @@ fps = 140
 tick = 0
 tick2 = 0
 tick3 = 0
-min_score = 0
 
 # начало отсчета времени
 clock = pygame.time.Clock()
@@ -622,8 +633,7 @@ while running:
                 pacman.rot(90)
             if event.key == pygame.K_DOWN:
                 pacman.rot(-90)
-    if score > min_score:
-        min_score = score - min_score + min_score
+        
     # проверка счетчика
     if tick == 2:
         blinky.update()
@@ -641,7 +651,7 @@ while running:
         pygame.mixer.music.play(0)
         blinky.restart()
 
-    # Пакман двигается
+    # движение игрока и призрака
     if not pause and not gameover and not game_win:
         pacman.move()
         if tick3 == 0:
@@ -668,33 +678,26 @@ while running:
             pacman.restart()
             blinky.restart()
             board.reload()
-
+    
     # вызываем метод спрайтов
     all_sprites.draw(screen)
-
+    
     board.render(screen)
     board.scoring(pacman.where())
 
-    # настройка счетчика
+    # отправка координат игрока счётчику на проверку наличия точек в этом месте
     board.scoring(pacman.where())
 
-    # настройка шрифта
+    # вывод и настройка счётчика
     font = pygame.font.Font(None, 30)
-
-    # сама надпись счета
     text = font.render(f"Score: {str(score)}", True, (0, 255, 0))
-
-    # координаты надписи
     text_x = 0
     text_y = 630
-
-    # высота и ширина подписи
     text_w = text.get_width()
     text_h = text.get_height()
-
-    # текст на экране
     screen.blit(text, (text_x + 50, text_y))
 
+    # проверка количества жизней
     if lives == 3:
         life1.draw(screen)
         life2.draw(screen)
@@ -705,6 +708,7 @@ while running:
     elif lives == 1:
         life1.draw(screen)
     elif lives == -1 and gameover:
+        # проигрыш игрока и всё, что должно при этом отобразиться
         pause = False
         pygame.draw.rect(screen, pygame.Color(0, 0, 0),
                          (220, 459, 135, 25), 0)
@@ -717,16 +721,17 @@ while running:
         screen.blit(text, (text_x + 50, text_y))
 
     if dots_left == 0:
+        # инициализация победы
         fps = 5
         pause = True
         game_win = True
         dots_left = 271
 
-    # увеличиваем переменную на 1
+    # увеличение игровых счётчиков на 1 ед
     tick += 1
     tick3 += 1
 
-    # проверка на то, чтобы переменная была не больше 3
+    # обнуление счётчиков
     if tick > 4:
         tick = 0
     if tick3 > 1:
