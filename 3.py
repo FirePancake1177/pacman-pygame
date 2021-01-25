@@ -606,9 +606,6 @@ while running:
     # заливаем фон черным цветом
     screen.fill(pygame.Color("black"))
 
-    # вызываем метод спрайтов
-    all_sprites.draw(screen)
-
     # события игрового цикла
     for event in pygame.event.get():
 
@@ -671,6 +668,9 @@ while running:
             pacman.restart()
             blinky.restart()
             board.reload()
+
+    # вызываем метод спрайтов
+    all_sprites.draw(screen)
 
     board.render(screen)
     board.scoring(pacman.where())
