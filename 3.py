@@ -332,6 +332,7 @@ class Blinky(AnimatedSprite):
         self.next_dest = 'right'
         super().__init__(sheet, columns, rows, x, y)
 
+    # обновление маршрута призрака
     def update(self):
         if self.frame == 0:
             self.frame = 1
@@ -350,6 +351,7 @@ class Blinky(AnimatedSprite):
         self.image = self.frames[self.frame2]
         self.mask = pygame.mask.from_surface(self.image)
 
+    # расчет пути к Пакману
     def check(self):
         cell = board.get_cell(self.where())
         pac = pacman.where()
@@ -398,9 +400,11 @@ class Blinky(AnimatedSprite):
                 (cell[1] - 1, cell[0])) != 1 and self.destination != 'down':
             self.next_dest = 'up'
 
+    # функция, возвращающая координаты объекта
     def where(self):
         return self.rect.x + 17, self.rect.y + 17
 
+    # рестарт поля
     def restart(self):
         self.rect.x = 264
         self.rect.y = 453.5
@@ -408,6 +412,7 @@ class Blinky(AnimatedSprite):
         self.destination = 'right'
         self.next_dest = 'right'
 
+    # само движение призрака
     def move(self):
         global cell
 
